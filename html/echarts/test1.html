@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <title>ECharts</title>
+    <script src="js/echarts.min.js"></script>
+<script   src="https://code.jquery.com/jquery-3.1.1.js"   integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA="   crossorigin="anonymous"></script>
+</head>
+<body>
+    <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+    <div id="main" style="height:400px"></div>
+    <script type="text/javascript">
+              var  myChart = echarts.init(document.getElementById('main'));
+              var option = {
+                    tooltip: {
+                        show: true
+                    },
+                    legend: {
+                       data:['XCH_BUYIN']
+                    },
+                    xAxis : [
+                        {
+                            type : 'category',
+                            data : (function(){
+                                    var arr=[];
+                                        $.ajax({
+                                        type : "post",
+                                        async : false, //同步执行
+                                        url : "test1.php/get_price",
+                                        data : {},
+                                        dataType : "json", //返回数据形式为json
+                                        success : function(result) {
+                                        if (result) {
+                                              console.log(result);
+                                               for(var i=0;i<result.length;i++){
+                                                  console.log(result[i].fetch_time);
+                                                  arr.push(result[i].fetch_time);
+                                                }
+                                        }
+
+                                    },
+                                    error : function(errorMsg) {
+                                        alert("sorry，请求数据失败");
+                                        myChart.hideLoading();
+                                    }
+                                   })
+                                   return arr;
+                                })()
+                        }
+                    ],
+                    yAxis : [
+                        {
+                            type : 'value',
+                            boundaryGap: [6.5, 7],
+                            scale: true,
+                        }
+                    ],
+                    series : [
+                        {
+                            "name":"XCH_BUYIN",
+                            "type":"line",
+                            "data":(function(){
+                                        var arr=[];
+                                        $.ajax({
+                                        type : "post",
+                                        async : false, //同步执行
+                                        url : "test1.php",
+                                        data : {},
+                                        dataType : "json", //返回数据形式为json
+                                        success : function(result) {
+                                        if (result) {
+                                               for(var i=0;i<result.length;i++){
+                                                  console.log(result[i].XCH_BUYIN);
+                                                  arr.push(result[i].XCH_BUYIN);
+                                                }
+                                        }
+                                    },
+                                    error : function(errorMsg) {
+                                        alert("sorry，请求数据失败");
+                                        myChart.hideLoading();
+                                    }
+                                   })
+                                  return arr;
+                            })()
+
+                        }
+                    ]
+                };
+                // 为echarts对象加载数据
+                myChart.setOption(option);
+            // }
+    </script>
+</body>
+</html>
